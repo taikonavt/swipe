@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
     URL url;
     String[] sets;
 
-    public static final String TAG = "MyTag";
-    public static final String KEY = "key";
+    public static final String TAG = "MyLog";
+    public static final String SETS = "sets";
     public static final String USERID = "userId";
 
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                intent.putExtra(KEY, sets);
+                intent.putExtra(SETS, sets);
                 intent.putExtra(USERID, userId);
 
                 startActivity(intent);

@@ -24,8 +24,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import static com.example.maxim.swipe.MainActivity.TAG;
+import static com.example.maxim.swipe.ListActivity.CHOICES;
+import static com.example.maxim.swipe.ListActivity.IMAGE;
 
 /**
  * Created by maxim on 07.09.17.
@@ -37,7 +40,11 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
 
     private Context context;
 
-    private boolean itemIsChecked = false;
+    private String[] choices;
+    private String contentUriString;
+
+//    private boolean itemIsChecked = false;
+
 
     @Override
     public ListAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -108,7 +115,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
 //            checkBox = (CheckBox) itemView.findViewById(R.id.cb_list_item);
         }
 
-        void bind(int imageId, String text) {
+        void bind(int imageId, final String text) {
 
 //            imageView.setImageResource(imageId);
             textView.setText(text);
@@ -139,19 +146,19 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
 
                     int id = (int) v.getTag();
 
-                    startSomeCode(id);
+                    startSomeCode(text);
 
                 }
             });
         }
     }
 
-    private void  startSomeCode(int id) {
+    private void  startSomeCode(String text) {
 
         URL url = null;
 
         try {
-            url = new URL(Contract.BASE_URI.toString() + "/card/Cats");
+            url = new URL(Contract.BASE_URI.toString() + "/card/" + text);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -159,7 +166,18 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
         SecondTask task = new SecondTask();
         task.execute(url);
 
-        Intent intent = new Intent();
+        try {
+            task.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        Intent intent = new Intent(context, SwipeActivity.class);
+
+        intent.putExtra(CHOICES, choices);
+        intent.putExtra(IMAGE, contentUriString);
 
         context.startActivity(intent);
 
@@ -179,7 +197,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
             } catch (IOException e) {
                 e.printStackTrace();
             }
-Log.d(TAG, stringJson);
+
             parseJsonString(stringJson);
 
             return null;
@@ -194,16 +212,18 @@ Log.d(TAG, stringJson);
                 JSONObject qcardJsonObject = jsonObject.getJSONObject("qcard");
 
                 String contentString = qcardJsonObject.getString("content");
-Log.d(TAG, contentString + " parseJsonString() " + ListAdapter.class.getSimpleName());
+
+                contentUriString = getUrlFromString(contentString);
+
                 JSONObject qsetJsonObject = qcardJsonObject.getJSONObject("q_set");
 
                 JSONArray choicesJsonArray = qsetJsonObject.getJSONArray("choices");
 
-                String[] strings = new String[choicesJsonArray.length()];
+                choices = new String[choicesJsonArray.length()];
 
                 for (int i = 0; i < choicesJsonArray.length(); i++) {
-Log.d(TAG, strings[i] + " parseJsonString() " + ListAdapter.class.getSimpleName());
-                    strings[i] = choicesJsonArray.getString(i);
+
+                    choices[i] = choicesJsonArray.getString(i);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -237,6 +257,26 @@ Log.d(TAG, strings[i] + " parseJsonString() " + ListAdapter.class.getSimpleName(
             } finally {
                 urlConnection.disconnect();
             }
+        }
+
+        String getUrlFromString(String string) {
+
+            String result = "";
+
+            int i = 0;
+
+            while (string.charAt(i) != '\'')
+                i++;
+
+            i++;
+
+            while (string.charAt(i) != '\'') {
+
+                result = result + string.charAt(i);
+                i++;
+            }
+
+            return result;
         }
 
         @Override

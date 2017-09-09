@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import static com.example.maxim.swipe.MainActivity.KEY;
+import static com.example.maxim.swipe.MainActivity.SETS;
 
 /**
  * Created by maxim on 08.09.17.
@@ -18,6 +18,9 @@ public class ListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ListAdapter adapter;
+
+    public static final String IMAGE = "image";
+    public static final String CHOICES = "choices";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +43,13 @@ public class ListActivity extends AppCompatActivity {
         adapter.swapArray(getInfoForList());
     }
 
-    ArrayList<ListActivity.InfoForListItem> getInfoForList() {
+    ArrayList<InfoForListItem> getInfoForList() {
 
         Intent intent = getIntent();
 
-        String[] setsStrings = intent.getStringArrayExtra(KEY);
+        String[] setsStrings = intent.getStringArrayExtra(SETS);
 
-        ArrayList<ListActivity.InfoForListItem> arrayList = new ArrayList<>();
+        ArrayList<InfoForListItem> arrayList = new ArrayList<>();
 
         for (int i = 0; i < setsStrings.length; i++) {
 
