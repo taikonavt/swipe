@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     EditText editText;
     Button button;
     String userId;
-    URL url;
     String[] sets;
 
     public static final String TAG = "MyLog";
@@ -46,15 +46,6 @@ public class MainActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.et_main_activity);
         button = (Button) findViewById(R.id.btn_main_activity);
 
-        try {
-            url = new URL(Contract.BASE_URI.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        final FirstTask task = new FirstTask();
-        task.execute(url);
-
         final Intent intent = new Intent(this, ListActivity.class);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 userId = editText.getText().toString();
+
+                if (userId.length() == 0) {
+
+                    Toast.makeText(getBaseContext(), "Input User ID!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                final FirstTask task = new FirstTask();
+                task.execute();
 
                 try {
                     task.get();
@@ -81,17 +81,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class FirstTask extends AsyncTask<URL, Void, Void> {
+    private class FirstTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(URL... params) {
+        protected Void doInBackground(Void... params) {
 
             String stringJson = null;
 
             try {
 
-                NetUtils netUtils = new NetUtils();
-                stringJson = netUtils.getResponseFromHttpUrl(params[0]);
+                stringJson = getResponseFromHttpUrl();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -100,6 +99,40 @@ public class MainActivity extends AppCompatActivity {
             parseJsonString(stringJson);
 
             return null;
+        }
+
+        String getResponseFromHttpUrl() throws IOException {
+
+            URL url = null;
+
+            try {
+                url = new URL(Contract.BASE_URI.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+
+                InputStream in = urlConnection.getInputStream();
+
+                Scanner scanner = new Scanner(in);
+                scanner.useDelimiter("\\A");
+
+                boolean hasInput = scanner.hasNext();
+                if (hasInput) {
+
+                    String string = scanner.next();
+
+                    return string;
+                } else {
+
+                    return null;
+                }
+            } finally {
+                urlConnection.disconnect();
+            }
         }
 
         void parseJsonString(String stringJson) {

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 
 import static com.example.maxim.swipe.MainActivity.SETS;
+import static com.example.maxim.swipe.MainActivity.USERID;
 
 /**
  * Created by maxim on 08.09.17.
@@ -19,8 +20,7 @@ public class ListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ListAdapter adapter;
 
-    public static final String IMAGE = "image";
-    public static final String CHOICES = "choices";
+    public static final String SETSCHOICE = "setSchoice";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class ListActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         String[] setsStrings = intent.getStringArrayExtra(SETS);
+        String userId = intent.getStringExtra(USERID);
 
         ArrayList<InfoForListItem> arrayList = new ArrayList<>();
 
@@ -56,7 +57,7 @@ public class ListActivity extends AppCompatActivity {
             int imageId = this.getResources().getIdentifier("picture_" + ( i % 3 + 1),
                     "drawable", this.getPackageName());
 
-            InfoForListItem infoForListItem = new InfoForListItem(i, imageId, setsStrings[i]);
+            InfoForListItem infoForListItem = new InfoForListItem(i, imageId, setsStrings[i], userId);
 
             arrayList.add(infoForListItem);
         }
@@ -70,12 +71,14 @@ public class ListActivity extends AppCompatActivity {
         int id;
         int image;
         String text;
+        String userId;
 
-        InfoForListItem(int id, int image, String text) {
+        InfoForListItem(int id, int image, String text, String userId) {
 
             this.id = id;
             this.image = image;
             this.text = text;
+            this.userId = userId;
         }
     }
 }
