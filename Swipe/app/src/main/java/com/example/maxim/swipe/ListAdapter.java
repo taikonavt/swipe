@@ -159,9 +159,9 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
         SecondTask task = new SecondTask();
         task.execute(url);
 
-//        Intent intent = new Intent();
-//
-//        context.startActivity(intent);
+        Intent intent = new Intent();
+
+        context.startActivity(intent);
 
     }
 
@@ -187,22 +187,27 @@ Log.d(TAG, stringJson);
 
         void parseJsonString(String stringJson) {
 
-//            try {
+            try {
 
-//                JSONObject jsonObject = new JSONObject(stringJson);
-//
-//                JSONArray setsJsonArray = jsonObject.getJSONArray("Sets");
-//
-//                sets = new String[setsJsonArray.length()];
-//
-//                for (int i = 0; i < setsJsonArray.length(); i++) {
-//
-//                    sets[i] = setsJsonArray.getString(i);
-//                }
+                JSONObject jsonObject = new JSONObject(stringJson);
 
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+                JSONObject qcardJsonObject = jsonObject.getJSONObject("qcard");
+
+                String contentString = qcardJsonObject.getString("content");
+Log.d(TAG, contentString + " parseJsonString() " + ListAdapter.class.getSimpleName());
+                JSONObject qsetJsonObject = qcardJsonObject.getJSONObject("q_set");
+
+                JSONArray choicesJsonArray = qsetJsonObject.getJSONArray("choices");
+
+                String[] strings = new String[choicesJsonArray.length()];
+
+                for (int i = 0; i < choicesJsonArray.length(); i++) {
+Log.d(TAG, strings[i] + " parseJsonString() " + ListAdapter.class.getSimpleName());
+                    strings[i] = choicesJsonArray.getString(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         String getResponseFromHttpUrl(URL url) throws IOException {
