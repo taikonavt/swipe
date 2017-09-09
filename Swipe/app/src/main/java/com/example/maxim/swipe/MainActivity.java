@@ -1,69 +1,130 @@
 package com.example.maxim.swipe;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private ListAdapter adapter;
+    EditText editText;
+    Button button;
+    String userId;
+    URL url;
+    String[] sets;
+
+    public static final String TAG = "MyTag";
+    public static final String KEY = "key";
+    public static final String USERID = "userId";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("Card Sets");
+        editText = (EditText) findViewById(R.id.et_main_activity);
+        button = (Button) findViewById(R.id.btn_main_activity);
 
-        recyclerView = (RecyclerView) findViewById(R.id.rv_main);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
-        recyclerView.setLayoutManager(layoutManager);
-
-        recyclerView.setHasFixedSize(true);
-
-        adapter = new ListAdapter();
-
-        recyclerView.setAdapter(adapter);
-
-        adapter.swapArray(getInfoForList());
-    }
-
-    ArrayList<InfoForListItem> getInfoForList() {
-
-        String[] strings = getResources().getStringArray(R.array.strings_for_list);
-
-        ArrayList<InfoForListItem> arrayList = new ArrayList<>();
-
-        for (int i = 0; i < strings.length; i++) {
-
-            int imageId = this.getResources().getIdentifier("picture_" + ( i % 3 + 1),
-                    "drawable", this.getPackageName());
-
-            InfoForListItem infoForListItem = new InfoForListItem(i, imageId, strings[i]);
-
-            arrayList.add(infoForListItem);
+        try {
+            url = new URL(Contract.BASE_URI.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
 
-        return arrayList;
+        final FirstTask task = new FirstTask();
+        task.execute(url);
+
+        final Intent intent = new Intent(this, ListActivity.class);
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                userId = editText.getText().toString();
+
+                try {
+                    task.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                intent.putExtra(KEY, sets);
+                intent.putExtra(USERID, userId);
+
+                startActivity(intent);
+            }
+        });
     }
 
 
-    class InfoForListItem {
+    private class FirstTask extends AsyncTask<URL, Void, Void> {
 
-        int id;
-        int image;
-        String text;
+        @Override
+        protected Void doInBackground(URL... params) {
 
-        InfoForListItem(int id, int image, String text) {
+            String stringJson = null;
 
-            this.id = id;
-            this.image = image;
-            this.text = text;
+            try {
+
+                NetUtils netUtils = new NetUtils();
+                stringJson = netUtils.getResponseFromHttpUrl(params[0]);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            parseJsonString(stringJson);
+
+            return null;
+        }
+
+        void parseJsonString(String stringJson) {
+
+            try {
+
+                JSONObject jsonObject = new JSONObject(stringJson);
+
+                JSONArray setsJsonArray = jsonObject.getJSONArray("Sets");
+
+                sets = new String[setsJsonArray.length()];
+
+                for (int i = 0; i < setsJsonArray.length(); i++) {
+
+                    sets[i] = setsJsonArray.getString(i);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
     }
 }

@@ -2,18 +2,8 @@
 
     <string name="app_name">Swipe</string>
 
-    <array name="strings_for_list">
-        <item>Cats</item>
-        <item>Dogs</item>
-        <item>Monkeys</item>
-        <item>Cows</item>
-        <item>Dolphins</item>
-        <item>Butterflies</item>
-        <item>Horses</item>
-        <item>Piglets</item>
-        <item>Chickens</item>
-        <item>Ducks</item>
-    </array>
+    <string name="user_id">User-Id</string>
+    <string name="next">Next</string>
 
 
 </resources>
