@@ -15,8 +15,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,6 +44,8 @@ public class SwipeActivity extends AppCompatActivity {
 
     private String[] choices;
     private String contentUriString;
+
+    private String stringJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +83,6 @@ public class SwipeActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-                Toast.makeText(getBaseContext(), "Left", Toast.LENGTH_SHORT).show();
-
                 ForthTask task4 = new ForthTask();
                 task4.execute(setChoice, choices[0]);
 
@@ -96,10 +99,8 @@ public class SwipeActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
-                Toast.makeText(getBaseContext(), "Right", Toast.LENGTH_SHORT).show();
-
                 ForthTask task4 = new ForthTask();
-                task4.execute(setChoice, choices[0]);
+                task4.execute(setChoice, choices[1]);
 
                 setInfo(setChoice, userId);
             }
@@ -144,7 +145,7 @@ public class SwipeActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
 
-            String stringJson = null;
+            stringJson = null;
 
             try {
 
@@ -255,33 +256,45 @@ public class SwipeActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
 
-            String stringJson = null;
+            String responseJson = null;
 
-            URL url = null;
-
-            try {
-                url = new URL(Contract.BASE_URI.toString() + "/card/" + params[0] + "/" + params[1]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            String answerJsonString = changeJsonString(params[1]);
 
             try {
 
-                stringJson = getResponseFromHttpUrl(url);
+                responseJson = getResponseFromHttpUrl(params[0], answerJsonString);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-Log.d(TAG, stringJson + " doInBackground() " + SwipeActivity.class.getSimpleName());
+Log.d(TAG, responseJson + " doInBackground() " + SwipeActivity.class.getSimpleName());
             return null;
         }
 
-        String getResponseFromHttpUrl(URL url) throws IOException {
+        String getResponseFromHttpUrl(String param, String answerJsonString) throws IOException {
+
+            URL url = null;
+
+            try {
+                url = new URL(Contract.BASE_URI.toString() + "/answer");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+Log.d(TAG, url.toString() + " getResponseFromHttpUrl() " + SwipeActivity.class.getSimpleName());
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("x-api-key", "r4djhKHqzP1DNShjAzr3faFPGubypuEU1duI2Wr1");
             urlConnection.setRequestProperty("Content-Type", "application/json");
+
+            BufferedWriter outputStream = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+
+            outputStream.write(answerJsonString);
+            outputStream.flush();
+            outputStream.close();
 
             try {
 
@@ -304,6 +317,34 @@ Log.d(TAG, stringJson + " doInBackground() " + SwipeActivity.class.getSimpleName
                 urlConnection.disconnect();
             }
         }
+
+         String changeJsonString(String answer) {
+
+             JSONObject jsonObject = null;
+
+             try {
+
+                jsonObject = new JSONObject(stringJson);
+
+Log.d(TAG, jsonObject.toString(3));
+
+                jsonObject.put("answer", answer);
+
+             } catch (JSONException e) {
+                e.printStackTrace();
+             }
+
+             String answerString = null;
+
+             try {
+                 answerString = jsonObject.toString();
+             } catch (NullPointerException e) {
+                 e.printStackTrace();
+             }
+Log.d(TAG, answerString + " changeJsonString() " + SwipeActivity.class.getSimpleName());
+Log.d(TAG, stringJson + " changeJsonString() " + SwipeActivity.class.getSimpleName());
+             return answerString;
+         }
     }
 }
 
