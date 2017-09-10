@@ -266,7 +266,7 @@ public class SwipeActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-Log.d(TAG, responseJson + " doInBackground() " + SwipeActivity.class.getSimpleName());
+
             return null;
         }
 
@@ -279,8 +279,6 @@ Log.d(TAG, responseJson + " doInBackground() " + SwipeActivity.class.getSimpleNa
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-
-Log.d(TAG, url.toString() + " getResponseFromHttpUrl() " + SwipeActivity.class.getSimpleName());
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
@@ -325,8 +323,6 @@ Log.d(TAG, url.toString() + " getResponseFromHttpUrl() " + SwipeActivity.class.g
 
                 jsonObject = new JSONObject(stringJson);
 
-Log.d(TAG, jsonObject.toString(3));
-
                 jsonObject.put("answer", answer);
 
              } catch (JSONException e) {
@@ -340,8 +336,7 @@ Log.d(TAG, jsonObject.toString(3));
              } catch (NullPointerException e) {
                  e.printStackTrace();
              }
-Log.d(TAG, answerString + " changeJsonString() " + SwipeActivity.class.getSimpleName());
-Log.d(TAG, stringJson + " changeJsonString() " + SwipeActivity.class.getSimpleName());
+
              return answerString;
          }
     }

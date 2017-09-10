@@ -5,5 +5,7 @@
     <string name="user_id">User-Id</string>
     <string name="next">Next</string>
 
+    <string name="x_api_key_value"></string>
+
 
 </resources>
