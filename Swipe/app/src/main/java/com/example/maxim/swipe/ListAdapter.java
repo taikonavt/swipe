@@ -2,7 +2,6 @@ package com.example.maxim.swipe;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,23 +10,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
-import static com.example.maxim.swipe.MainActivity.SETS;
-import static com.example.maxim.swipe.MainActivity.TAG;
 import static com.example.maxim.swipe.ListActivity.SETSCHOICE;
 import static com.example.maxim.swipe.MainActivity.USERID;
 
@@ -80,7 +64,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
     }
 
     ArrayList<ListActivity.InfoForListItem>
-                            swapArray (ArrayList<ListActivity.InfoForListItem> a) {
+    swapArray(ArrayList<ListActivity.InfoForListItem> a) {
 
         if (arrayList == a) {
             return null;
@@ -99,7 +83,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
 
     class ListViewHolder extends RecyclerView.ViewHolder {
 
-//        ImageView imageView;
+        //        ImageView imageView;
         TextView textView;
 //        CheckBox checkBox;
 
@@ -129,7 +113,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
         }
     }
 
-    private void  startSomeCode(String text, String userId) {
+    private void startSomeCode(String text, String userId) {
 
         Intent intent = new Intent(context, SwipeActivity.class);
 
@@ -138,106 +122,4 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
 
         context.startActivity(intent);
     }
-
-//    class SecondTask extends AsyncTask<URL, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(URL... params) {
-//
-//            String stringJson = null;
-//
-//            try {
-//
-//                stringJson = getResponseFromHttpUrl(params[0]);
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            parseJsonString(stringJson);
-//
-//            return null;
-//        }
-//
-//        void parseJsonString(String stringJson) {
-//
-//            try {
-//
-//                JSONObject jsonObject = new JSONObject(stringJson);
-//
-//                JSONObject qcardJsonObject = jsonObject.getJSONObject("qcard");
-//
-//                String contentString = qcardJsonObject.getString("content");
-//
-//                contentUriString = getUrlFromString(contentString);
-//
-//                JSONObject qsetJsonObject = qcardJsonObject.getJSONObject("q_set");
-//
-//                JSONArray choicesJsonArray = qsetJsonObject.getJSONArray("choices");
-//
-//                choices = new String[choicesJsonArray.length()];
-//
-//                for (int i = 0; i < choicesJsonArray.length(); i++) {
-//
-//                    choices[i] = choicesJsonArray.getString(i);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        String getResponseFromHttpUrl(URL url) throws IOException {
-//
-//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            urlConnection.setRequestMethod("GET");
-//            urlConnection.setRequestProperty("x-api-key", "r4djhKHqzP1DNShjAzr3faFPGubypuEU1duI2Wr1");
-//            urlConnection.setRequestProperty("user-id", "test_user2");
-//
-//            try {
-//
-//                InputStream in = urlConnection.getInputStream();
-//
-//                Scanner scanner = new Scanner(in);
-//                scanner.useDelimiter("\\A");
-//
-//                boolean hasInput = scanner.hasNext();
-//                if (hasInput) {
-//
-//                    String string = scanner.next();
-//
-//                    return string;
-//                } else {
-//
-//                    return null;
-//                }
-//            } finally {
-//                urlConnection.disconnect();
-//            }
-//        }
-//
-//        String getUrlFromString(String string) {
-//
-//            String result = "";
-//
-//            int i = 0;
-//
-//            while (string.charAt(i) != '\'')
-//                i++;
-//
-//            i++;
-//
-//            while (string.charAt(i) != '\'') {
-//
-//                result = result + string.charAt(i);
-//                i++;
-//            }
-//
-//            return result;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//        }
-//    }
 }
