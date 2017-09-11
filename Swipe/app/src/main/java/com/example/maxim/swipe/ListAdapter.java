@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-import static com.example.maxim.swipe.ListActivity.SETSCHOICE;
-import static com.example.maxim.swipe.MainActivity.USERID;
 
 /**
  * Created by maxim on 07.09.17.
@@ -113,12 +111,13 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolde
         }
     }
 
+    // start next activity when list button is clicked
     private void startSomeCode(String text, String userId) {
 
         Intent intent = new Intent(context, SwipeActivity.class);
 
-        intent.putExtra(SETSCHOICE, text);
-        intent.putExtra(USERID, userId);
+        intent.putExtra(ListActivity.SETS_CHOICE_KEY, text);
+        intent.putExtra(MainActivity.USERID_KEY, userId);
 
         context.startActivity(intent);
     }

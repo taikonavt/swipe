@@ -5,7 +5,11 @@
     <string name="user_id">User-Id</string>
     <string name="next">Next</string>
 
-    <string name="x_api_key_value"></string>
+    <string name="x_api_key_value">r4djhKHqzP1DNShjAzr3faFPGubypuEU1duI2Wr1</string>
+
+    <string name="empty_et_error">Input User ID!</string>
+    <string name="empty_set_error">There is no connection!</string>
+
 
 
 </resources>

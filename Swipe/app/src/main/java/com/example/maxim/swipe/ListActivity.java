@@ -8,8 +8,6 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import static com.example.maxim.swipe.MainActivity.SETS;
-import static com.example.maxim.swipe.MainActivity.USERID;
 
 /**
  * Created by maxim on 08.09.17.
@@ -20,7 +18,7 @@ public class ListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ListAdapter adapter;
 
-    public static final String SETSCHOICE = "setSchoice";
+    public static final String SETS_CHOICE_KEY = "setsChoice";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +41,19 @@ public class ListActivity extends AppCompatActivity {
         adapter.swapArray(getInfoForList());
     }
 
+    // build array for list of Questions Sets
     ArrayList<InfoForListItem> getInfoForList() {
 
         Intent intent = getIntent();
 
-        String[] setsStrings = intent.getStringArrayExtra(SETS);
-        String userId = intent.getStringExtra(USERID);
+        String[] setsStrings = intent.getStringArrayExtra(MainActivity.SETS_KEY);
+        String userId = intent.getStringExtra(MainActivity.USERID_KEY);
 
         ArrayList<InfoForListItem> arrayList = new ArrayList<>();
 
         for (int i = 0; i < setsStrings.length; i++) {
 
+            // is not used. Set some picture to list item
             int imageId = this.getResources().getIdentifier("picture_" + ( i % 3 + 1),
                     "drawable", this.getPackageName());
 

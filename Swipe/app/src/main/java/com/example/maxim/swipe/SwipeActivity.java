@@ -25,9 +25,7 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.maxim.swipe.ListActivity.SETSCHOICE;
 import static com.example.maxim.swipe.MainActivity.TAG;
-import static com.example.maxim.swipe.MainActivity.USERID;
 
 
 /**
@@ -68,8 +66,8 @@ public class SwipeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        final String setChoice = intent.getStringExtra(SETSCHOICE);
-        final String userId = intent.getStringExtra(USERID);
+        final String setChoice = intent.getStringExtra(ListActivity.SETS_CHOICE_KEY);
+        final String userId = intent.getStringExtra(MainActivity.USERID_KEY);
 
         setInfo(setChoice, userId);
 
@@ -106,6 +104,7 @@ public class SwipeActivity extends AppCompatActivity {
         }).attachToRecyclerView(recyclerView);
     }
 
+    // sets new choices and send link on picture to adapter
     void setInfo(String setChoice, String userId) {
 
         SecondTask task = new SecondTask();
@@ -139,6 +138,7 @@ public class SwipeActivity extends AppCompatActivity {
         }
     }
 
+    // send request for question card and get choices and picture link from Json response
     private class SecondTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -198,7 +198,8 @@ public class SwipeActivity extends AppCompatActivity {
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("x-api-key", "r4djhKHqzP1DNShjAzr3faFPGubypuEU1duI2Wr1");
+            urlConnection.setRequestProperty("x-api-key",
+                                    getResources().getString(R.string.x_api_key_value));
             urlConnection.setRequestProperty("user-id", params[1]);
 
             try {
@@ -249,7 +250,7 @@ public class SwipeActivity extends AppCompatActivity {
         }
     }
 
-
+    // build  Json with answer and send it to server
     private class ForthTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -266,6 +267,8 @@ public class SwipeActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Log.d(TAG, responseJson);
 
             return null;
         }
@@ -284,10 +287,14 @@ public class SwipeActivity extends AppCompatActivity {
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("x-api-key", "r4djhKHqzP1DNShjAzr3faFPGubypuEU1duI2Wr1");
+
+            urlConnection.setRequestProperty("x-api-key",
+                                        getResources().getString(R.string.x_api_key_value));
+
             urlConnection.setRequestProperty("Content-Type", "application/json");
 
-            BufferedWriter outputStream = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+            BufferedWriter outputStream = new BufferedWriter(
+                    new OutputStreamWriter(urlConnection.getOutputStream()));
 
             outputStream.write(answerJsonString);
             outputStream.flush();

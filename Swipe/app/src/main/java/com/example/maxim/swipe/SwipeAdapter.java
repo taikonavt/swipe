@@ -102,6 +102,7 @@ public class SwipeAdapter extends RecyclerView.Adapter <SwipeAdapter.SwipeViewHo
         }
     }
 
+    // download picture from net and set it on screen
     private class ThirdTask extends AsyncTask<URL, Void, Void> {
 
         @Override
